@@ -30,7 +30,7 @@
               <td>{{ student.phone }}</td>
               <td>{{ formatDate(student.created_at) }}</td>
               <td>
-                <RouterLink :to="{path: '/student/edit/'+student.id}" class="btn btn-secondary">Edit</RouterLink>
+                <RouterLink :to="{path: '/student/edit/'+student.id}" class="btn btn-success">Edit</RouterLink>
                 <button type="button" @click="deleteUser(student.id)" class="btn btn-danger ms-1">Delete</button>
               </td>
             </tr>
