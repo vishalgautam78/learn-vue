@@ -93,9 +93,15 @@ import axios from 'axios';
             async saveStudent() {
                 try {
                     this.errors = {};
-                    await axios.post('http://127.0.0.1:8000/api/user/create', this.model.student).then(res => {
+                    let formdata = new FormData();
+                    formdata.append('name', this.model.student.name);
+                    formdata.append('email', this.model.student.email);
+                    formdata.append('phone', this.model.student.phone);
+                    formdata.append('image', this.model.student.image);
+                    await axios.post('http://127.0.0.1:8000/api/user/create', formdata, { headers: { 'Content-Type': 'multipart/form-data' } }).then(res => {
                     alert(res.data.message);
                     this.model.student = {};
+                    this.previewImage = null;
                 })
                 } catch (error) {
                     if (error.response && error.response.status === 422) {
