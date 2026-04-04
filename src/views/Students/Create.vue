@@ -27,12 +27,25 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <button type="button" @click="saveStudent" class="btn btn-primary float-end">Save</button>
+                    <label for="">Profile Photo</label>
+                    <input type="file" @change="handleFileUpload" :class="['form-control', errors.image ? 'is-invalid' : '']">
+                    <div class="invalid-feedback">
+                        {{ errors.image ? errors.image[0] : '' }}
+                    </div>
+                </div>
+                <!-- Image Preview -->
+                <div v-if="previewImage" class="mt-3">
+                    <img :src="previewImage" width="120" height="120" style="object-fit: cover; border-radius: 8px;">
                 </div>
                 <div>
-                    <RouterLink to="/students" class="btn btn-secondary float-end">
-                        Back
-                    </RouterLink>
+                    <div class="mb-3">
+                        <button type="button" @click="saveStudent" class="btn btn-primary float-end">Save</button>
+                    </div>
+                    <div>
+                        <RouterLink to="/students" class="btn btn-secondary float-end">
+                            Back
+                        </RouterLink>
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,12 +64,32 @@ import axios from 'axios';
                         name: '',
                         email: '',
                         phone: '',
+                        image: null,
                     },
                 },
-                errors: {}
+                errors: {},
+                previewImage: null,
             }
         },
         methods: {
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+                // Image Validation
+                if (!file.type.startsWith('image/')) {
+                    alert('Only image files are allowed');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Max file size is 2MB');
+                    return;
+                }
+                this.model.student.image = file;
+                // Preview
+                this.previewImage = URL.createObjectURL(file);
+            },
             async saveStudent() {
                 try {
                     this.errors = {};
