@@ -26,13 +26,26 @@
                         {{ errors.phone ? errors.phone[0] : '' }}
                     </div>
                 </div>
-                <div class="mb-3">
-                    <button type="button" @click="updateStudent()" class="btn btn-primary float-end">Update</button>
+                <div>
+                    <!-- Show Old Image -->
+                    <img 
+                        v-if="previewImage" 
+                        :src="previewImage" 
+                        width="120"
+                    />
+
+                    <!-- File Input -->
+                    <input type="file" @change="handleFileUpload" />
                 </div>
                 <div>
-                    <RouterLink to="/students" class="btn btn-secondary float-end">
-                        Back
-                    </RouterLink>
+                    <div class="mb-3">
+                        <button type="button" @click="updateStudent()" class="btn btn-primary float-end">Update</button>
+                    </div>
+                    <div>
+                        <RouterLink to="/students" class="btn btn-secondary float-end">
+                            Back
+                        </RouterLink>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,9 +65,11 @@ import axios from 'axios';
                         name: '',
                         email: '',
                         phone: '',
+                        image: null
                     },
                 },
-                errors: {}
+                errors: {},
+                previewImage: null,
             }
         },
         mounted() {
@@ -62,9 +77,30 @@ import axios from 'axios';
             this.studentId = this.$route.params.id;
         },
         methods: {
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+                // Image Validation
+                if (!file.type.startsWith('image/')) {
+                    alert('Only image files are allowed');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Max file size is 2MB');
+                    return;
+                }
+                this.model.student.image = file;
+                // Preview
+                this.previewImage = URL.createObjectURL(file);
+            },
             getStudentData(studentId) {
                 axios.get(`http://127.0.0.1:8000/api/user/edit/${studentId}`).then(res => {
+                    console.log('vishal', res.data.image);
                     this.model.student = res.data;
+                    // Show existing image
+                    this.previewImage = `http://127.0.0.1:8000/storage/${res.data.image}`;
                 })
                 .catch(function(error) {
                     if (error.response) {
@@ -77,8 +113,16 @@ import axios from 'axios';
             async updateStudent() {
                 try {
                     this.errors = {};
-                    await axios.put(`http://127.0.0.1:8000/api/user/update/${this.studentId}`, this.model.student).then(res => {
+
+                    let formdata = new FormData();
+                    formdata.append('name', this.model.student.name);
+                    formdata.append('email', this.model.student.email);
+                    formdata.append('phone', this.model.student.phone);
+                    formdata.append('image', this.model.student.image);
+                    await axios.put(`http://127.0.0.1:8000/api/user/update/${this.studentId}`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } }).then(res => {
                     alert(res.data.message);
+                    this.model.student = {};
+                    this.previewImage = null;
                 })
                 } catch (error) {
                     if (error.response && error.response.status === 422) {

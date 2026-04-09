@@ -15,6 +15,7 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>Image</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -25,6 +26,7 @@
           <tbody v-if="this.students.length > 0">
             <tr v-for="(student, index) in this.students" :key="index">
               <td>{{ student.id }}</td>
+              <td> <img :src="getImgUrl(student.image)" width="80" alt=""> </td>
               <td>{{ student.name }}</td>
               <td>{{ student.email }}</td>
               <td>{{ student.phone }}</td>
@@ -80,6 +82,9 @@ import axios from 'axios';
             this.getUsers();
           }); 
         }
+      },
+      getImgUrl(image) {
+        return `http://127.0.0.1:8000/storage/${image}`
       }
     }
   }
