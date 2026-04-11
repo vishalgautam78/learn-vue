@@ -113,16 +113,16 @@ import axios from 'axios';
             async updateStudent() {
                 try {
                     this.errors = {};
-
                     let formdata = new FormData();
+                    formdata.append('_method', 'PUT');
                     formdata.append('name', this.model.student.name);
                     formdata.append('email', this.model.student.email);
                     formdata.append('phone', this.model.student.phone);
-                    formdata.append('image', this.model.student.image);
-                    await axios.put(`http://127.0.0.1:8000/api/user/update/${this.studentId}`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } }).then(res => {
+                    if (this.model.student.image) {
+                        formdata.append('image', this.model.student.image);
+                    }
+                    await axios.post(`http://127.0.0.1:8000/api/user/update/${this.studentId}`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } }).then(res => {
                     alert(res.data.message);
-                    this.model.student = {};
-                    this.previewImage = null;
                 })
                 } catch (error) {
                     if (error.response && error.response.status === 422) {
