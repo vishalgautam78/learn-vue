@@ -58,7 +58,7 @@ import axios from 'axios';
     export default {
         name: 'StudentCreate',
         data() {
-            return {
+            return {    
                 studentId: '',
                 model: {
                     student: {
@@ -97,7 +97,6 @@ import axios from 'axios';
             },
             getStudentData(studentId) {
                 axios.get(`http://127.0.0.1:8000/api/user/edit/${studentId}`).then(res => {
-                    console.log('vishal', res.data.image);
                     this.model.student = res.data;
                     // Show existing image
                     this.previewImage = `http://127.0.0.1:8000/storage/${res.data.image}`;
@@ -118,7 +117,7 @@ import axios from 'axios';
                     formdata.append('name', this.model.student.name);
                     formdata.append('email', this.model.student.email);
                     formdata.append('phone', this.model.student.phone);
-                    if (this.model.student.image) {
+                    if (this.model.student.image instanceof File) {
                         formdata.append('image', this.model.student.image);
                     }
                     await axios.post(`http://127.0.0.1:8000/api/user/update/${this.studentId}`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } }).then(res => {
