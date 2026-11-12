@@ -122,6 +122,7 @@ import axios from 'axios';
                     }
                     await axios.post(`http://127.0.0.1:8000/api/user/update/${this.studentId}`, formdata, { headers: { 'Content-Type': 'multipart/form-data' } }).then(res => {
                     alert(res.data.message);
+                    this.$router.push('/students');
                 })
                 } catch (error) {
                     if (error.response && error.response.status === 422) {

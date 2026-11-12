@@ -24,8 +24,8 @@
             </tr>
           </thead>
           <tbody v-if="this.students.length > 0">
-            <tr v-for="(student, index) in this.students" :key="index">
-              <td>{{ student.id }}</td>
+            <tr v-for="(student, index) in this.students" :key="student.id">
+              <td>{{ index + 1 }}</td>
               <td> <img :src="getImgUrl(student.image)" width="80" alt=""> </td>
               <td>{{ student.name }}</td>
               <td>{{ student.email }}</td>
